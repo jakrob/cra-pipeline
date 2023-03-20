@@ -1,18 +1,18 @@
-import * as CDK from '@aws-cdk/core'
-import * as CodeBuild from '@aws-cdk/aws-codebuild'
-import * as S3 from '@aws-cdk/aws-s3'
-import * as CodePipeline from '@aws-cdk/aws-codepipeline'
-import * as CodePipelineAction from '@aws-cdk/aws-codepipeline-actions'
+import * as cdk from 'aws-cdk-lib'
+import * as CodeBuild from 'aws-cdk-lib/aws-codebuild'
+import * as S3 from 'aws-cdk-lib/aws-s3'
+import * as CodePipeline from 'aws-cdk-lib/aws-codepipeline'
+import * as CodePipelineAction from 'aws-cdk-lib/aws-codepipeline-actions'
 
-export interface PipelineProps extends CDK.StackProps {
+export interface PipelineProps extends cdk.StackProps {
   github: {
     owner: string
     repository: string
   }
 }
 
-export class Pipeline extends CDK.Stack {
-  constructor(scope: CDK.App, id: string, props: PipelineProps) {
+export class Pipeline extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props: PipelineProps) {
     super(scope, id, props)
 
     // Amazon S3 bucket to store CRA website
@@ -40,7 +40,7 @@ export class Pipeline extends CDK.Stack {
           actionName: 'Checkout',
           owner: props.github.owner,
           repo: props.github.repository,
-          oauthToken: CDK.SecretValue.secretsManager('GitHubToken'),
+          oauthToken: cdk.SecretValue.secretsManager('GitHubToken-' + props.github.owner),
           output: outputSources,
           trigger: CodePipelineAction.GitHubTrigger.WEBHOOK,
         }),
@@ -77,7 +77,7 @@ export class Pipeline extends CDK.Stack {
       ],
     })
 
-    new CDK.CfnOutput(this, 'WebsiteURL', {
+    new cdk.CfnOutput(this, 'WebsiteURL', {
       value: bucketWebsite.bucketWebsiteUrl,
       description: 'Website URL',
     })
