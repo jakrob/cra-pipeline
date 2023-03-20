@@ -8,6 +8,7 @@ export interface PipelineProps extends cdk.StackProps {
   github: {
     owner: string
     repository: string
+    branch: string
   }
 }
 
@@ -43,6 +44,7 @@ export class Pipeline extends cdk.Stack {
           oauthToken: cdk.SecretValue.secretsManager('GitHubToken-' + props.github.owner),
           output: outputSources,
           trigger: CodePipelineAction.GitHubTrigger.WEBHOOK,
+          branch: props.github.branch,
         }),
       ],
     })
